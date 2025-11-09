@@ -23,7 +23,7 @@ public class StatementPrinter {
      */
     public String statement() {
 
-        final int volumeCredits = getVolumeCredits();
+        final int volumeCredits = getTotalVolumeCredits();
 
         final StringBuilder result = getStringBuilder();
 
@@ -39,7 +39,7 @@ public class StatementPrinter {
         int rslt = 0;
         for (Performance p : getInvoice().getPerformances()) {
 
-            rslt += getThisAmount(p);
+            rslt += getAmount(p);
         }
         return rslt;
     }
@@ -50,7 +50,7 @@ public class StatementPrinter {
         for (Performance p : getInvoice().getPerformances()) {
 
             result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).getName(),
-                    usd(getThisAmount(p)), p.getAudience()));
+                    usd(getAmount(p)), p.getAudience()));
         }
         return result;
     }
@@ -59,7 +59,7 @@ public class StatementPrinter {
         return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / Constants.PERCENT_FACTOR);
     }
 
-    private int getVolumeCredits() {
+    private int getTotalVolumeCredits() {
         int rslt = 0;
         for (Performance p : getInvoice().getPerformances()) {
 
@@ -83,7 +83,7 @@ public class StatementPrinter {
         return getPlays().get(performance.getPlayID());
     }
 
-    private int getThisAmount(Performance performance) {
+    private int getAmount(Performance performance) {
         int rslt = 0;
         switch (getPlay(performance).getType()) {
             case "tragedy":
