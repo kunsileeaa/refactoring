@@ -24,7 +24,8 @@ public class StatementPrinter {
     public String statement() {
         int totalAmount = 0;
         int volumeCredits = 0;
-        final StringBuilder result = new StringBuilder("Statement for " + getInvoice().getCustomer() + System.lineSeparator());
+        final StringBuilder result = new StringBuilder("Statement for " + getInvoice().getCustomer()
+                + System.lineSeparator());
 
         final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
@@ -61,10 +62,12 @@ public class StatementPrinter {
             }
 
             // print line for this order
-            result.append(String.format("  %s: %s (%s seats)%n", play.getName(), frmt.format(thisAmount / 100), p.getAudience()));
+            result.append(String.format("  %s: %s (%s seats)%n", play.getName(),
+                    frmt.format(thisAmount / Constants.PERCENT_FACTOR), p.getAudience()));
             totalAmount += thisAmount;
         }
-        result.append(String.format("Amount owed is %s%n", frmt.format(totalAmount / 100)));
+        result.append(String.format("Amount owed is %s%n",
+                frmt.format(totalAmount / Constants.PERCENT_FACTOR)));
         result.append(String.format("You earned %s credits%n", volumeCredits));
         return result.toString();
     }
