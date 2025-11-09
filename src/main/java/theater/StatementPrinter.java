@@ -22,29 +22,51 @@ public class StatementPrinter {
      * @throws RuntimeException if one of the play types is not known
      */
     public String statement() {
-        int totalAmount = 0;
-        int volumeCredits = 0;
-        final StringBuilder result = new StringBuilder("Statement for " + getInvoice().getCustomer()
-                + System.lineSeparator());
 
-        for (Performance p : getInvoice().getPerformances()) {
+        final int volumeCredits = getVolumeCredits();
 
-            // add volume credits
-            volumeCredits += getVolumeCredits(p);
+        final StringBuilder result = getStringBuilder();
 
-            // print line for this order
-            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).getName(),
-                    usd(getThisAmount(p)), p.getAudience()));
-            totalAmount += getThisAmount(p);
-        }
+        final int totalAmount = getTotalAmount();
+
         result.append(String.format("Amount owed is %s%n",
                 usd(totalAmount)));
         result.append(String.format("You earned %s credits%n", volumeCredits));
         return result.toString();
     }
 
+    private int getTotalAmount() {
+        int rslt = 0;
+        for (Performance p : getInvoice().getPerformances()) {
+
+            rslt += getThisAmount(p);
+        }
+        return rslt;
+    }
+
+    private StringBuilder getStringBuilder() {
+        final StringBuilder result = new StringBuilder("Statement for " + getInvoice().getCustomer()
+                + System.lineSeparator());
+        for (Performance p : getInvoice().getPerformances()) {
+
+            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).getName(),
+                    usd(getThisAmount(p)), p.getAudience()));
+        }
+        return result;
+    }
+
     private static String usd(int totalAmount) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / Constants.PERCENT_FACTOR);
+    }
+
+    private int getVolumeCredits() {
+        int rslt = 0;
+        for (Performance p : getInvoice().getPerformances()) {
+
+            // add volume credits
+            rslt += getVolumeCredits(p);
+        }
+        return rslt;
     }
 
     private int getVolumeCredits(Performance performance) {
